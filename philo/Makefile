@@ -5,59 +5,39 @@
 #                                                     +:+ +:+         +:+      #
 #    By: anfichet <anfichet@student.42lyon.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/03/08 18:25:46 by anfichet          #+#    #+#              #
-#    Updated: 2024/03/25 18:56:11 by anfichet         ###   ########lyon.fr    #
+#    Created: 2024/04/15 17:29:13 by anfichet          #+#    #+#              #
+#    Updated: 2024/04/15 17:29:13 by anfichet         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = pipex
-NAME_BONUS = pipex_bonus
-
-LIBS = libft.a
+NAME = philo
 
 # *********************************VARIABLES**************************************** #
 
 SRCS_DIR = ./srcs
 
 SRCS =\
-		main.c \
+		philo.c \
 		utils.c \
-		children.c \
-		parsing.c \
+
 
 SRCS := $(SRCS:%=$(SRCS_DIR)/%)
-
-SRCS_BONUS =\
-		main_bonus.c \
-		utils_bonus.c \
-		children_bonus.c \
-		parsing_bonus.c \
-		
-SRCS_BONUS := $(SRCS_BONUS:%=$(SRCS_DIR)/%)
 
 OBJS_DIR = ./objs
 
 OBJS = $(SRCS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
 
-OBJS_BONUS = $(SRCS_BONUS:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
-
 INCS = ./incs
 
-INCS_LIBS = ./libft/INCS
-
 DEPS = $(OBJS:.o=.d)
-
-DEPS_BONUS = $(OBJS_BONUS:.o=.d)
-
-LIBS_TARGET = ./libft/libft.a
 
 # **********************************COMMANDS**************************************** #
 
 CC = cc
 
-CFLAGS = -Werror -Wextra -Wall -g3 -MMD -MP
+CFLAGS = -Werror -Wextra -Wall -g3 -MMD -MP -pthread
 
-CPPFLAGS = -I$(INCS) -I$(INCS_LIBS)
+CPPFLAGS = -I$(INCS)
 
 CFSIGSEV = -fsanitize=address
 
@@ -67,49 +47,29 @@ RM = rm -rf
 
 DIR_DUP = mkdir -p $(@D)
 
-AR = ar rcs
-
 MAKEFLAGS += --no-print-directory
 
 # **********************************RULES**************************************** #
 
 all:	$(NAME)
 
-bonus:	$(NAME_BONUS)
-
 -include $(DEPS)
--include $(DEPS_BONUS)
 
-$(NAME): $(LIBS_TARGET) $(OBJS)
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(OBJS) -L$(dir $(LIBS_TARGET)) -lft -o $(NAME)
-
-$(NAME_BONUS): $(LIBS_TARGET) $(OBJS_BONUS)
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(OBJS_BONUS) -L$(dir $(LIBS_TARGET)) -lft -o $(NAME_BONUS)
-
-$(LIBS_TARGET): FORCE
-	@echo " "
-	@echo "\033[1m\033[32m#-------------------------[COMPILATION LIBFT]-------------------------#\033[0m"
-	$(MAKE) -C $(@D)
-	@echo "\033[1m\033[32m#---------------------------[LIBFT COMPILED]--------------------------#\033[0m"
-	@echo " "
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(OBJS) -o $(NAME)
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
 	@$(DIR_DUP)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
-fsanitize : fclean $(LIBS_TARGET) $(OBJS) $(INCS)
-	$(CC) $(CFLAGS) $(CFSIGSEV) $(CPPFLAGS) $(OBJS) -L$(dir $(LIBS_TARGET)) -lft -o $(NAME)
-
-# fsanitize_bonus : fclean $(LIBS_TARGET) $(OBJS_BONUS) $(INCS)
-# 	$(CC) $(CFLAGS) $(CFSIGSEV) $(CPPFLAGS) $(OBJS_BONUS) -L$(dir $(LIBS_TARGET)) -lft -o $(CHECKER)
+fsanitize : fclean $(OBJS) $(INCS)
+	$(CC) $(CFLAGS) $(CFSIGSEV) $(CPPFLAGS) $(OBJS) -o $(NAME)
 
 clean :
 	$(RM) $(OBJS_DIR)
-	$(MAKE) $@ -C ./libft
 
 fclean : clean
 	$(RM) $(NAME)
-	$(MAKE) $@ -C ./libft
 
 re : fclean all
 
