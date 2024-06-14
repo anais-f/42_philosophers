@@ -34,14 +34,15 @@ typedef struct s_philo
 {
 	pthread_t  philo_id;
 	int        n_philo;
-	t_fork     *fork[2];
+	t_fork     *fork_right;
+	t_fork     *fork_left;
 }   t_philo;
 
 
 
 void    *routine(void *arg);
 void    init_philo(int nb_philo, t_philo *philo);
-void    init_fork(int nb_philo, t_fork *fork);
+int    init_fork(int nb_philo, t_fork *fork);
 
 /* Utils */
 int	ft_atoi(const char *str);

@@ -31,9 +31,8 @@ int main(int argc, char **argv)
 		return (1);
 
 
-	// init le tableau de philo
-	init_philo(nb_philo, philo);
 	init_fork(nb_philo, fork);
+	init_philo(nb_philo, philo);
 
 	// creer les threads
 	pthread_create(&(philo[0].philo_id), NULL, &routine, NULL);
@@ -55,12 +54,13 @@ void    init_philo(int nb_philo, t_philo *philo)
 	{
 		philo[i].n_philo = i + 1;
 		printf("philo n %d\n", philo[i].n_philo);
-		//philo[i].fork[0] = init_fork(nb_philo, philo[i].fork);
+		//philo[i].fork_right = ;
+		philo[i].fork_left = philo[i + 1].fork_right;
 		i++;
 	}
 }
 
-void    init_fork(int nb_philo, t_fork *fork)
+int    init_fork(int nb_philo, t_fork *fork)
 {
 	int i;
 
@@ -68,9 +68,21 @@ void    init_fork(int nb_philo, t_fork *fork)
 	while (i < nb_philo)
 	{
 		fork[i].fork = false;
-		pthread_mutex_init(&fork[i].mutex_fork, NULL);
+		if (pthread_mutex_init(&fork[i].mutex_fork, NULL) != 0)
+		{
+			while (i--)
+			{
+				if (pthread_mutex_destroy(&fork[i].mutex_fork) != 0)
+				{
+					perror("Destroy mutex");
+					return (2);
+				}
+			perror("Init mutex");
+			return (1);
+		}
 		i++;
 	}
+	return (EXIT_SUCCESS)
 }
 
 void    *routine(void *arg)

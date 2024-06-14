@@ -37,6 +37,7 @@ int check_input(int argc, char **argv)
 	}
 	return (EXIT_SUCCESS);
 }
+// gerer max int pour le bloquer dans le parsing
 
 int	ft_atoi(const char *str)
 {
