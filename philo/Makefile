@@ -20,6 +20,7 @@ SRCS =\
 		philo.c \
 		utils.c \
 		initialization.c \
+		routine.c \
 
 
 SRCS := $(SRCS:%=$(SRCS_DIR)/%)

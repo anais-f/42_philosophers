@@ -45,6 +45,7 @@ typedef struct s_param
 	size_t  time_to_die;
 	size_t  time_to_eat;
 	size_t  time_to_sleep;
+	size_t  nb_must_eat;
 }   t_param;
 
 typedef struct s_philo
@@ -58,22 +59,25 @@ typedef struct s_philo
 
 typedef struct s_simulation
 {
-	t_philo philo;
-	t_tfork fork;
+	t_philo *philo;
+	t_tfork *tfork;
 	t_param param;
 }   t_simulation;
 
 
 
 void    *routine(void *arg);
-void    init_philo(size_t nb_philo, t_philo *philo, t_tfork *tfork, t_param data_arg);
+long    get_timestamp(t_philo *philo);
+
+/* Initialization */
+void    init_philo(size_t nb_philo, t_philo *philo, t_tfork *tfork, t_param *param);
 int     init_fork(size_t nb_philo, t_tfork *fork);
-void    init_arg(char **argv, t_param data_arg);
-int init_simulation(size_t nb_philo, t_philo *philo, t_tfork *fork, t_param param);
+void    init_arg(char **argv, t_param *param);
+int     init_simulation(size_t nb_philo, char **argv, t_simulation *simulation);
 
 /* Utils */
-int	ft_atoi(const char *str);
-int check_input(int argc, char **argv);
-int get_error_message(int code);
+int     ft_atoi(const char *str);
+int     check_input(int argc, char **argv);
+int     get_error_message(int code);
 
 #endif

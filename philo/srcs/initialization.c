@@ -12,14 +12,23 @@
 
 #include "philo.h"
 
-int init_simulation(size_t nb_philo, char **argv, t_param param)
+int init_simulation(size_t nb_philo, char **argv, t_simulation *simulation)
 {
-	init_arg(argv, &data_arg);
-	printf("main timestamp start = %ld\n", data_arg.start_time);
-	if (init_fork(nb_philo, tfork) != 0) {
+	//malloc des tableaux
+	simulation->philo = malloc(sizeof(t_philo) * nb_philo);
+	if (!simulation->philo)
 		return (EXIT_FAILURE);
-	}
-	init_philo(nb_philo, philo, tfork, &data_arg);
+	simulation->tfork = malloc(sizeof(t_tfork) * nb_philo);
+	if (!simulation->tfork)
+		return (EXIT_FAILURE);
+
+	//initialisation des structures
+	init_arg(argv, &simulation->param);
+	if (init_fork(nb_philo, simulation->tfork) != 0)
+		return (EXIT_FAILURE);
+	init_philo(nb_philo, simulation->philo, simulation->tfork, &simulation->param);
+
+	return (EXIT_SUCCESS);
 }
 
 int    init_fork(size_t nb_philo, t_tfork *tfork)
@@ -36,29 +45,29 @@ int    init_fork(size_t nb_philo, t_tfork *tfork)
 			while (i--)
 			{
 				if (pthread_mutex_destroy(&tfork[i].mutex_fork) != 0)
-					get_error_message(ERROR_DESTROY_MUTEX);
+					return (get_error_message(ERROR_DESTROY_MUTEX));
 			}
-			get_error_message(ERROR_INIT_MUTEX);
+			return (get_error_message(ERROR_INIT_MUTEX));
 		}
 		i++;
 	}
 	return (EXIT_SUCCESS);
 }
 
-void    init_philo(size_t nb_philo, t_philo *philo, t_tfork *tfork, t_param param)
+void    init_philo(size_t nb_philo, t_philo *philo, t_tfork *tfork, t_param *param)
 {
 	size_t i;
 	size_t j;
 
 	i = 0;
 	j = 1;
-//	printf("nb philo = %zu\n", nb_philo);
+	//printf("nb philo = %zu\n", nb_philo);
 	while (i < nb_philo)
 	{
 		philo[i].n_philo = j;
-//		printf("philo n %zu\n", philo[i].n_philo);
+		//printf("philo n %zu\n", philo[i].n_philo);
+		philo[i].param = *param;
 		philo[i].f_right = &tfork[i];
-		philo[i].param = param;
 		if (j < nb_philo)
 			philo[i].f_left = philo[i + 1].f_right;
 		else if (j == nb_philo)
@@ -68,12 +77,26 @@ void    init_philo(size_t nb_philo, t_philo *philo, t_tfork *tfork, t_param para
 	}
 }
 
-void    init_arg(char **argv, t_param param)
+void    init_arg(char **argv, t_param *param)
 {
 	struct timeval tv;
 	(void)argv;
+	(void)param;
 
+	/****************************************************/
 	gettimeofday(&tv, NULL);
-	param.start_time = (tv.tv_sec *1000 + tv.tv_usec / 1000);
-	printf("timestamp start = %ld\n", param.start_time);
+	param->start_time = (tv.tv_sec *1000 + tv.tv_usec / 1000);
+	//printf("timestamp start = %ld\n", param->start_time);
+	/**********************************************/
+
+	param->time_to_die = ft_atoi(argv[2]);
+	param->time_to_eat = ft_atoi(argv[3]);
+	param->time_to_sleep = ft_atoi(argv[4]);
+	if (argv[5])
+		param->nb_must_eat = ft_atoi(argv[5]);
+	else
+		param->nb_must_eat = 0;
+
+	//printf("to die = %ld, to eat = %ld, to sleep = %ld\n", param->time_to_die, param->time_to_eat, param->time_to_sleep);
+
 }
