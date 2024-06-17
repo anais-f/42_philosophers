@@ -21,31 +21,59 @@
 # include <limits.h>
 # include <pthread.h>
 # include <stdbool.h>
+# include <errno.h>
+# include <sys/time.h>
 
+typedef enum s_error
+{
+	ERROR_INIT_MUTEX = 3,
+	ERROR_DESTROY_MUTEX,
+	ERROR_THREAD,
+
+}   t_error;
 
 typedef struct s_fork
 {
+	size_t          n_fork;
 	bool            fork;
 	pthread_mutex_t mutex_fork;
-}   t_fork;
+}   t_tfork;
 
+typedef struct s_param
+{
+	long    start_time;
+	size_t  time_to_die;
+	size_t  time_to_eat;
+	size_t  time_to_sleep;
+}   t_param;
 
 typedef struct s_philo
 {
-	pthread_t  philo_id;
-	int        n_philo;
-	t_fork     *fork_right;
-	t_fork     *fork_left;
+	pthread_t   philo_id;
+	size_t      n_philo;
+	t_tfork     *f_right;
+	t_tfork     *f_left;
+	t_param     param;
 }   t_philo;
+
+typedef struct s_simulation
+{
+	t_philo philo;
+	t_tfork fork;
+	t_param param;
+}   t_simulation;
 
 
 
 void    *routine(void *arg);
-void    init_philo(int nb_philo, t_philo *philo);
-int    init_fork(int nb_philo, t_fork *fork);
+void    init_philo(size_t nb_philo, t_philo *philo, t_tfork *tfork, t_param data_arg);
+int     init_fork(size_t nb_philo, t_tfork *fork);
+void    init_arg(char **argv, t_param data_arg);
+int init_simulation(size_t nb_philo, t_philo *philo, t_tfork *fork, t_param param);
 
 /* Utils */
 int	ft_atoi(const char *str);
 int check_input(int argc, char **argv);
+int get_error_message(int code);
 
 #endif

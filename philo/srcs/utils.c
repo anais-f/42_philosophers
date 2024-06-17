@@ -67,3 +67,23 @@ int	ft_atoi(const char *str)
 	}
 	return (nb * sign);
 }
+
+int get_error_message(int code)
+{
+	if (code == ERROR_INIT_MUTEX)
+	{
+		printf("Error init mutex: %s\n", strerror(errno));
+		return (ERROR_INIT_MUTEX);
+	}
+	else if (code == ERROR_DESTROY_MUTEX)
+	{
+		printf("Error destroy mutex: %s\n", strerror(errno));
+		return (ERROR_DESTROY_MUTEX);
+	}
+	else if (code == ERROR_THREAD)
+	{
+		printf("Error thread: %s\n", strerror(errno));
+		return (ERROR_THREAD);
+	}
+	return (EXIT_SUCCESS);
+}

@@ -19,6 +19,7 @@ SRCS_DIR = ./srcs
 SRCS =\
 		philo.c \
 		utils.c \
+		initialization.c \
 
 
 SRCS := $(SRCS:%=$(SRCS_DIR)/%)
