@@ -35,13 +35,13 @@ typedef enum s_error
 typedef struct s_fork
 {
 	size_t          n_fork;
-	bool            fork;
+	bool            fork_taken;
 	pthread_mutex_t mutex_fork;
 }   t_tfork;
 
 typedef struct s_param
 {
-	long    start_time;
+	size_t  start_time;
 	size_t  time_to_die;
 	size_t  time_to_eat;
 	size_t  time_to_sleep;
@@ -54,6 +54,8 @@ typedef struct s_philo
 	size_t      n_philo;
 	t_tfork     *f_right;
 	t_tfork     *f_left;
+	size_t      last_meal;
+	bool        philo_is_die; //pour verifier si un est mort pour stop tout le reste et de print - A MUTEX
 	t_param     param;
 }   t_philo;
 
@@ -67,7 +69,8 @@ typedef struct s_simulation
 
 
 void    *routine(void *arg);
-long    get_timestamp(t_philo *philo);
+size_t  get_timestamp(t_philo *philo);
+void    get_time_last_meal(t_philo *philo);
 
 /* Initialization */
 void    init_philo(size_t nb_philo, t_philo *philo, t_tfork *tfork, t_param *param);

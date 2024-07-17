@@ -21,7 +21,7 @@ int check_input(int argc, char **argv)
 		i = 1;
 		while (i < argc)
 		{
-			if (ft_atoi(argv[i]) > 0)
+			if (ft_atoi(argv[i]) > 0 && ft_atoi(argv[i]) <= INT_MAX)
 				i++;
 			else
 			{
