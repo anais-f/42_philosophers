@@ -19,6 +19,7 @@ SRCS_DIR = ./srcs
 SRCS =\
 		philo.c \
 		utils.c \
+		utils_time.c \
 		initialization.c \
 		routine.c \
 

@@ -67,10 +67,14 @@ typedef struct s_simulation
 }   t_simulation;
 
 
-
+/* Routine */
 void    *routine(void *arg);
-size_t  get_timestamp(t_philo *philo);
+void    monitoring_philo(t_philo *philo);
+
+/* Time */
+size_t  get_timestamp_print(t_philo *philo);
 void    get_time_last_meal(t_philo *philo);
+size_t  get_actual_time(t_philo *philo);
 
 /* Initialization */
 void    init_philo(size_t nb_philo, t_philo *philo, t_tfork *tfork, t_param *param);
