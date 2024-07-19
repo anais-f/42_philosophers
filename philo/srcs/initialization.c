@@ -63,7 +63,7 @@ void	init_philo(size_t nb_philo, t_philo *philo, t_tfork *tfork, \
 
 	i = 0;
 	j = 1;
-	printf("nb philo = %zu\n", nb_philo);
+	//printf("nb philo = %zu\n", nb_philo);
 	while (i < nb_philo)
 	{
 		philo[i].n_philo = j;
@@ -71,6 +71,7 @@ void	init_philo(size_t nb_philo, t_philo *philo, t_tfork *tfork, \
 		philo[i].param = *param;
 		philo[i].f_right = &tfork[i];
 		philo[i].last_meal = 0;
+		philo[i].nb_meal = 0;
 		philo[i].philo_is_die = false;
 		if (j < nb_philo)
 			philo[i].f_left = &tfork[i + 1];
@@ -89,7 +90,7 @@ void    init_arg(char **argv, t_param *param)
 	/****************************************************/
 	gettimeofday(&tv, NULL);
 	param->start_time = (tv.tv_sec *1000 + tv.tv_usec / 1000);
-	printf("timestamp start = %ld\n", param->start_time);
+//	printf("timestamp start = %ld\n", param->start_time);
 	/**********************************************/
 
 	param->time_to_die = ft_atoi(argv[2]);

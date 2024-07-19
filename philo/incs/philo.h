@@ -55,6 +55,7 @@ typedef struct s_philo
 	t_tfork     *f_right;
 	t_tfork     *f_left;
 	size_t      last_meal;
+	size_t      nb_meal;
 	bool        philo_is_die; //pour verifier si un est mort pour stop tout le reste et de print - A MUTEX
 	t_param     param;
 }   t_philo;

@@ -45,6 +45,8 @@ int main(int argc, char **argv)
 
 	//mettre le start time une fois les threads crees et avant le mutex start
 
+	// monitoring et mutex ici
+
 	//attendre les threads
 	i = 0;
 	while(i < nb_philo)
@@ -54,5 +56,29 @@ int main(int argc, char **argv)
 	}
 
 	return (EXIT_SUCCESS);
+}
+
+
+/* check if philo is alive or die */
+void    monitoring_philo(t_philo *philo)
+{
+	//un philo meurt s'il n'a pas manger si time to die > last meal // penser a mutex la verif / a faire dans le thread principal
+	// ici la condition du bon nombre de repas aussi ?? oui avec boucle pour verifier tous le monde
+	// attention, il faut que tous les [hilos aient mange le nb minimum de repas -> ils peuvent manger plus
+//	struct  timeval tv;
+//	size_t  actual;
+//	gettimeofday(&tv, NULL);
+//	actual = (tv.tv_sec *1000 + tv.tv_usec / 1000);
+
+	size_t  time_since_last_meal;
+	size_t  actual_time;
+
+	actual_time = get_actual_time(philo);
+	//printf("actual time = %ld vs vrai gettimeofdays = %ld\n", actual_time, actual);
+	time_since_last_meal = actual_time - philo->last_meal;
+//	printf("time last meal =%ld et time actual =%ld, diff entre les deux var=%ld et calcul =%ld\n", philo->last_meal, actual_time, time_since_last_meal, actual_time - philo->last_meal);
+	if (time_since_last_meal >= philo->param.time_to_die)
+		philo->philo_is_die = true;
+
 }
 
