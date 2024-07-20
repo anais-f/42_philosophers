@@ -14,20 +14,27 @@
 
 int	init_simulation(size_t nb_philo, char **argv, t_simulation *simulation)
 {
+	pthread_mutex_t mutex_start_and_end;
+
 	//malloc des tableaux
 	simulation->philo = malloc(sizeof(t_philo) * nb_philo);
-	if (!simulation->philo)
+	if (!simulation->philo) {
 		return (EXIT_FAILURE);
+	}
 	simulation->tfork = malloc(sizeof(t_tfork) * nb_philo);
-	if (!simulation->tfork)
+	if (!simulation->tfork) {
 		return (EXIT_FAILURE);
+	}
 
 	//initialisation des structures
+	if (pthread_mutex_init(&mutex_start_and_end, NULL) != 0)
+		return (get_error_message(ERROR_INIT_MUTEX));
+	simulation->mutex_start_and_end = mutex_start_and_end;
+
 	init_arg(argv, &simulation->param);
 	if (init_fork(nb_philo, simulation->tfork) != 0)
 		return (EXIT_FAILURE);
-	init_philo(nb_philo, simulation->philo, simulation->tfork, \
-	&simulation->param);
+	init_philo(nb_philo, simulation);
 
 	return (EXIT_SUCCESS);
 }
@@ -55,44 +62,36 @@ int	init_fork(size_t nb_philo, t_tfork *tfork)
 	return (EXIT_SUCCESS);
 }
 
-void	init_philo(size_t nb_philo, t_philo *philo, t_tfork *tfork, \
-		t_param *param)
+int	init_philo(size_t nb_philo, t_simulation *simulation)
 {
 	size_t	i;
 	size_t	j;
 
 	i = 0;
 	j = 1;
-	//printf("nb philo = %zu\n", nb_philo);
+
 	while (i < nb_philo)
 	{
-		philo[i].n_philo = j;
-		//printf("philo n %zu et i= %ld et j =%ld\n", philo[i].n_philo, i, j);
-		philo[i].param = *param;
-		philo[i].f_right = &tfork[i];
-		philo[i].last_meal = 0;
-		philo[i].nb_meal = 0;
-		philo[i].philo_is_die = false;
+		simulation->philo[i].n_philo = j;
+		simulation->philo[i].param = simulation->param;
+		simulation->philo[i].f_right = &simulation->tfork[i];
+		simulation->philo[i].last_meal = 0;
+		simulation->philo[i].nb_meal = 0;
+		simulation->philo[i].die_or_fed = false;
 		if (j < nb_philo)
-			philo[i].f_left = &tfork[i + 1];
+			simulation->philo[i].f_left = &simulation->tfork[i + 1];
 		else if (j == nb_philo)
-			philo[i].f_left = &tfork[0];
-
+			simulation->philo[i].f_left = &simulation->tfork[0];
+		simulation->philo[i].start_time = 0;
+		simulation->philo[i].mutex_start_and_end = &simulation->mutex_start_and_end;
 		i++;
 		j++;
 	}
+	return (EXIT_SUCCESS);
 }
 
 void    init_arg(char **argv, t_param *param)
 {
-	struct timeval tv;
-
-	/****************************************************/
-	gettimeofday(&tv, NULL);
-	param->start_time = (tv.tv_sec *1000 + tv.tv_usec / 1000);
-//	printf("timestamp start = %ld\n", param->start_time);
-	/**********************************************/
-
 	param->time_to_die = ft_atoi(argv[2]);
 	param->time_to_eat = ft_atoi(argv[3]);
 	param->time_to_sleep = ft_atoi(argv[4]);

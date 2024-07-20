@@ -17,21 +17,27 @@ int main(int argc, char **argv)
 	t_simulation    simulation;
 	size_t          nb_philo;
 	size_t          i;
+	struct timeval  tv;
+	size_t  start;
+
 
 	i = 0;
+	//start = 0;
 
 	// check input
 	if (check_input(argc, argv) == 1)
 		return (EXIT_FAILURE);
 	nb_philo = ft_atoi(argv[1]);
 
-	//remplir les tableaux et initialiser les structures
+	//creer les tableaux et initialiser les structures
 	if (init_simulation(nb_philo, argv, &simulation) != 0)
 		return (EXIT_FAILURE);
 
 	//creer les threads
+	pthread_mutex_lock(&simulation.mutex_start_and_end); // mutex le start, permet de bloquer le demarrage de la routine
 	while (i < nb_philo)
 	{
+		simulation.philo[i].start_time = &start;
 		//printf("philo n=%zu, valeur f.right num = %ld et bool = %d - valeur f.left num = %ld bool = %d\n", simulation.philo[i].n_philo, simulation.philo[i].f_right->n_fork, simulation.philo[i].f_right->fork_taken, simulation.philo[i].f_left->n_fork, simulation.philo[i].f_left->fork_taken);
 		if (pthread_create(&simulation.philo[i].philo_id, NULL, \
 		&routine, &simulation.philo[i]) != 0)
@@ -42,18 +48,28 @@ int main(int argc, char **argv)
 		}
 		i++;
 	}
-
-	//mettre le start time une fois les threads crees et avant le mutex start
+	gettimeofday(&tv, NULL);
+	start = (tv.tv_sec *1000 + tv.tv_usec / 1000);
+	//printf("\t\t\t\t\tstaet main = %ld\n", start);
+	pthread_mutex_unlock(&simulation.mutex_start_and_end); //le start est set partout et tous les threads sont crees donc on peut commencer la routine
 
 	// monitoring et mutex ici
+	/*
+	pthread_mutex_lock(&simulation.philo->mutex_start_and_end);
+	fonction monitoring;
+	pthread_mutex_unlock(&simulation.philo->mutex_start_and_end);
+	*/
 
-	//attendre les threads
+
+	//attendre les threads a la fin de leur routine
 	i = 0;
 	while(i < nb_philo)
 	{
 		pthread_join(simulation.philo[i].philo_id, NULL);
 		i++;
 	}
+
+	//free_struct(&simulation, nb_philo);
 
 	return (EXIT_SUCCESS);
 }
@@ -78,7 +94,7 @@ void    monitoring_philo(t_philo *philo)
 	time_since_last_meal = actual_time - philo->last_meal;
 //	printf("time last meal =%ld et time actual =%ld, diff entre les deux var=%ld et calcul =%ld\n", philo->last_meal, actual_time, time_since_last_meal, actual_time - philo->last_meal);
 	if (time_since_last_meal >= philo->param.time_to_die)
-		philo->philo_is_die = true;
+		philo->die_or_fed = true;
 
 }
 

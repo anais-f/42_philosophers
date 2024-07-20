@@ -20,7 +20,7 @@ SRCS =\
 		philo.c \
 		utils.c \
 		utils_time.c \
-		initialization.c \
+		initialisation.c \
 		routine.c \
 
 

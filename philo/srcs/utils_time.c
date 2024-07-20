@@ -43,6 +43,6 @@ size_t    get_timestamp_print(t_philo *philo)
 	gettimeofday(&tv, NULL);
 	actual_time = (tv.tv_sec *1000 + tv.tv_usec / 1000);
 //	printf("start time = %ld, actual time = %ld\n", philo->param.start_time, actual_time);
-	diff_time = (actual_time - philo->param.start_time);
+	diff_time = (actual_time - *philo->start_time);
 	return (diff_time);
 }

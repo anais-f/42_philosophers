@@ -41,7 +41,6 @@ typedef struct s_fork
 
 typedef struct s_param
 {
-	size_t  start_time;
 	size_t  time_to_die;
 	size_t  time_to_eat;
 	size_t  time_to_sleep;
@@ -50,20 +49,23 @@ typedef struct s_param
 
 typedef struct s_philo
 {
-	pthread_t   philo_id;
-	size_t      n_philo;
-	t_tfork     *f_right;
-	t_tfork     *f_left;
-	size_t      last_meal;
-	size_t      nb_meal;
-	bool        philo_is_die; //pour verifier si un est mort pour stop tout le reste et de print - A MUTEX
-	t_param     param;
+	pthread_t       philo_id;
+	size_t          n_philo;
+	t_tfork         *f_right;
+	t_tfork         *f_left;
+	size_t          last_meal;
+	size_t          nb_meal; //mutex
+	bool            die_or_fed; //pour verifier si un est mort pour stop tout le reste et de print - A MUTEX
+	size_t          *start_time;
+	pthread_mutex_t *mutex_start_and_end;
+	t_param         param;
 }   t_philo;
 
 typedef struct s_simulation
 {
 	t_philo *philo;
 	t_tfork *tfork;
+	pthread_mutex_t mutex_start_and_end;
 	t_param param;
 }   t_simulation;
 
@@ -78,7 +80,7 @@ void    get_time_last_meal(t_philo *philo);
 size_t  get_actual_time(t_philo *philo);
 
 /* Initialization */
-void    init_philo(size_t nb_philo, t_philo *philo, t_tfork *tfork, t_param *param);
+int    init_philo(size_t nb_philo, t_simulation * simulation);
 int     init_fork(size_t nb_philo, t_tfork *fork);
 void    init_arg(char **argv, t_param *param);
 int     init_simulation(size_t nb_philo, char **argv, t_simulation *simulation);
@@ -87,5 +89,6 @@ int     init_simulation(size_t nb_philo, char **argv, t_simulation *simulation);
 int     ft_atoi(const char *str);
 int     check_input(int argc, char **argv);
 int     get_error_message(int code);
+void free_struct(t_simulation *simulation, size_t nb_philo);
 
 #endif
