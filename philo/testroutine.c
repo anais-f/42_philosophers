@@ -38,7 +38,7 @@ void    *routine(void *arg)
 	 condition d'arret -> mort d'un philo ou que tous ai mange le bon nombre de repas
 	 */
 
-	// 1 while tant que lq simul es en ours et ensuite un while tant que ils n'ont pas 2 fork pour manger -> par defaut ils pensent
+	// un while tant que ils n'ont pas 2 fork pour manger -> par defaut ils pensent
 	// ils choppent une fork des que possible et il pensent en attendant d'avoir les deux
 	//bien checker la droite et gauche simultamenent et pas attendre l'une apres l'autre pour les prendre
 

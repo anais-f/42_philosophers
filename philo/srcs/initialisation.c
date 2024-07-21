@@ -18,13 +18,11 @@ int	init_simulation(size_t nb_philo, char **argv, t_simulation *simulation)
 
 	//malloc des tableaux
 	simulation->philo = malloc(sizeof(t_philo) * nb_philo);
-	if (!simulation->philo) {
+	if (!simulation->philo)
 		return (EXIT_FAILURE);
-	}
 	simulation->tfork = malloc(sizeof(t_tfork) * nb_philo);
-	if (!simulation->tfork) {
+	if (!simulation->tfork)
 		return (EXIT_FAILURE);
-	}
 
 	//initialisation des structures
 	if (pthread_mutex_init(&mutex_start_and_end, NULL) != 0)
@@ -47,7 +45,7 @@ int	init_fork(size_t nb_philo, t_tfork *tfork)
 	while (i < nb_philo)
 	{
 		tfork[i].n_fork = i + 1;
-		tfork[i].fork_taken = false;
+		tfork[i].fork = false;
 		if (pthread_mutex_init(&tfork[i].mutex_fork, NULL) != 0)
 		{
 			while (i--)
@@ -62,6 +60,7 @@ int	init_fork(size_t nb_philo, t_tfork *tfork)
 	return (EXIT_SUCCESS);
 }
 
+//possible de la remettre en void si pas de mutex declare
 int	init_philo(size_t nb_philo, t_simulation *simulation)
 {
 	size_t	i;
@@ -73,17 +72,19 @@ int	init_philo(size_t nb_philo, t_simulation *simulation)
 	while (i < nb_philo)
 	{
 		simulation->philo[i].n_philo = j;
-		simulation->philo[i].param = simulation->param;
-		simulation->philo[i].f_right = &simulation->tfork[i];
+		simulation->philo[i].right_fork = &simulation->tfork[i];
+		if (j < nb_philo)
+			simulation->philo[i].left_fork = &simulation->tfork[i + 1];
+		else if (j == nb_philo)
+			simulation->philo[i].left_fork = &simulation->tfork[0];
+		simulation->philo[i].right_fork_taken = false;
+		simulation->philo[i].left_fork_taken = false;
+		simulation->philo[i].die_or_fed = false;
 		simulation->philo[i].last_meal = 0;
 		simulation->philo[i].nb_meal = 0;
-		simulation->philo[i].die_or_fed = false;
-		if (j < nb_philo)
-			simulation->philo[i].f_left = &simulation->tfork[i + 1];
-		else if (j == nb_philo)
-			simulation->philo[i].f_left = &simulation->tfork[0];
 		simulation->philo[i].start_time = 0;
 		simulation->philo[i].mutex_start_and_end = &simulation->mutex_start_and_end;
+		simulation->philo[i].param = simulation->param;
 		i++;
 		j++;
 	}

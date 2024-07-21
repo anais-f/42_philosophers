@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 	while (i < nb_philo)
 	{
 		simulation.philo[i].start_time = &start;
-		//printf("philo n=%zu, valeur f.right num = %ld et bool = %d - valeur f.left num = %ld bool = %d\n", simulation.philo[i].n_philo, simulation.philo[i].f_right->n_fork, simulation.philo[i].f_right->fork_taken, simulation.philo[i].f_left->n_fork, simulation.philo[i].f_left->fork_taken);
+		//printf("philo n=%zu, valeur f.right num = %ld et bool = %d - valeur f.left num = %ld bool = %d\n", simulation.philo[i].n_philo, simulation.philo[i].right_fork->n_fork, simulation.philo[i].right_fork->fork_taken, simulation.philo[i].left_fork->n_fork, simulation.philo[i].left_fork->fork_taken);
 		if (pthread_create(&simulation.philo[i].philo_id, NULL, \
 		&routine, &simulation.philo[i]) != 0)
 		{

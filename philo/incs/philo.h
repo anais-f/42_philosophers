@@ -35,7 +35,7 @@ typedef enum s_error
 typedef struct s_fork
 {
 	size_t          n_fork;
-	bool            fork_taken;
+	bool            fork; //pour savoir si la fourchette est dispo sur la table
 	pthread_mutex_t mutex_fork;
 }   t_tfork;
 
@@ -45,17 +45,20 @@ typedef struct s_param
 	size_t  time_to_eat;
 	size_t  time_to_sleep;
 	size_t  nb_must_eat;
+	pthread_mutex_t mutex_print;
 }   t_param;
 
 typedef struct s_philo
 {
 	pthread_t       philo_id;
 	size_t          n_philo;
-	t_tfork         *f_right;
-	t_tfork         *f_left;
+	t_tfork         *right_fork;
+	t_tfork         *left_fork;
+	bool            right_fork_taken;
+	bool            left_fork_taken;
+	bool            die_or_fed; //pour verifier si un est mort pour stop tout le reste et de print - A MUTEX
 	size_t          last_meal;
 	size_t          nb_meal; //mutex
-	bool            die_or_fed; //pour verifier si un est mort pour stop tout le reste et de print - A MUTEX
 	size_t          *start_time;
 	pthread_mutex_t *mutex_start_and_end;
 	t_param         param;
@@ -66,6 +69,7 @@ typedef struct s_simulation
 	t_philo *philo;
 	t_tfork *tfork;
 	pthread_mutex_t mutex_start_and_end;
+	//pthread_mutex_t mutex_print;
 	t_param param;
 }   t_simulation;
 
