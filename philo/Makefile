@@ -42,7 +42,7 @@ CFLAGS = -Werror -Wextra -Wall -g3 -MMD -MP -pthread
 
 CPPFLAGS = -I$(INCS)
 
-CFSIGSEV = -fsanitize=address
+CFSIGSEV = -fsanitize=thread
 
 VALGRIND = valgrind -q --leak-check=full --show-reachable=yes
 

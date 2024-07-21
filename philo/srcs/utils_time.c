@@ -12,15 +12,13 @@
 
 #include "philo.h"
 
-size_t  get_actual_time(t_philo *philo)
+size_t  get_actual_time(void)
 {
 	struct  timeval tv;
 	size_t  actual_time;
 
-	(void)philo;
 	gettimeofday(&tv, NULL);
 	actual_time = (tv.tv_sec *1000 + tv.tv_usec / 1000);
-
 	return (actual_time);
 }
 

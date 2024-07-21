@@ -14,7 +14,7 @@
 
 int	init_simulation(size_t nb_philo, char **argv, t_simulation *simulation)
 {
-	pthread_mutex_t mutex_start_and_end;
+	//pthread_mutex_t mutex_start_and_end;
 
 	//malloc des tableaux
 	simulation->philo = malloc(sizeof(t_philo) * nb_philo);
@@ -24,12 +24,18 @@ int	init_simulation(size_t nb_philo, char **argv, t_simulation *simulation)
 	if (!simulation->tfork)
 		return (EXIT_FAILURE);
 
-	//initialisation des structures
-	if (pthread_mutex_init(&mutex_start_and_end, NULL) != 0)
-		return (get_error_message(ERROR_INIT_MUTEX));
-	simulation->mutex_start_and_end = mutex_start_and_end;
+	simulation->simul_to_stop = false;
 
-	init_arg(argv, &simulation->param);
+	//init des mutex
+	if (pthread_mutex_init(&simulation->mutex_start_and_end, NULL) != 0) {
+		return (get_error_message(ERROR_INIT_MUTEX));
+	}
+	if (pthread_mutex_init(&simulation->mutex_print, NULL) != 0)
+		return (get_error_message(ERROR_INIT_MUTEX));
+	//simulation->mutex_start_and_end = mutex_start_and_end;
+
+	//initialisation des structures
+	init_param(argv, &simulation->param);
 	if (init_fork(nb_philo, simulation->tfork) != 0)
 		return (EXIT_FAILURE);
 	init_philo(nb_philo, simulation);
@@ -60,7 +66,7 @@ int	init_fork(size_t nb_philo, t_tfork *tfork)
 	return (EXIT_SUCCESS);
 }
 
-//possible de la remettre en void si pas de mutex declare
+//possible de la remettre en void si pas de mutex declare // faire un memset + une init mutex a part
 int	init_philo(size_t nb_philo, t_simulation *simulation)
 {
 	size_t	i;
@@ -79,19 +85,40 @@ int	init_philo(size_t nb_philo, t_simulation *simulation)
 			simulation->philo[i].left_fork = &simulation->tfork[0];
 		simulation->philo[i].right_fork_taken = false;
 		simulation->philo[i].left_fork_taken = false;
-		simulation->philo[i].die_or_fed = false;
+		simulation->philo[i].die_or_fed = &simulation->simul_to_stop;
 		simulation->philo[i].last_meal = 0;
 		simulation->philo[i].nb_meal = 0;
 		simulation->philo[i].start_time = 0;
 		simulation->philo[i].mutex_start_and_end = &simulation->mutex_start_and_end;
+		simulation->philo[i].mutex_print = &simulation->mutex_print;
 		simulation->philo[i].param = simulation->param;
+
+//		if (pthread_mutex_init(&simulation->philo[i].mutex_die_fed, NULL) != 0)
+//		{
+//			while (i--)
+//			{
+//				if (pthread_mutex_destroy(&simulation->philo[i].mutex_die_fed) != 0)
+//					return (get_error_message(ERROR_DESTROY_MUTEX));
+//			}
+//			return (get_error_message(ERROR_INIT_MUTEX));
+//		}
+		if (pthread_mutex_init(&simulation->philo[i].mutex_meal, NULL) != 0)
+		{
+			while (i--)
+			{
+				if (pthread_mutex_destroy(&simulation->philo[i].mutex_meal) != 0)
+					return (get_error_message(ERROR_DESTROY_MUTEX));
+			}
+			return (get_error_message(ERROR_INIT_MUTEX));
+		}
+
 		i++;
 		j++;
 	}
 	return (EXIT_SUCCESS);
 }
 
-void    init_arg(char **argv, t_param *param)
+int    init_param(char **argv, t_param *param)
 {
 	param->time_to_die = ft_atoi(argv[2]);
 	param->time_to_eat = ft_atoi(argv[3]);
@@ -102,5 +129,6 @@ void    init_arg(char **argv, t_param *param)
 		param->nb_must_eat = 0;
 
 	//printf("to die = %ld, to eat = %ld, to sleep = %ld\n", param->time_to_die, param->time_to_eat, param->time_to_sleep);
+	return (EXIT_SUCCESS);
 
 }
