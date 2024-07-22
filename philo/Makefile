@@ -40,7 +40,7 @@ DEPS = $(OBJS:.o=.d)
 
 CC = cc
 
-CFLAGS = -Werror -Wextra -Wall -MMD -MP -pthread
+CFLAGS = -Werror -Wextra -Wall -g3 -MMD -MP -pthread
 
 CPPFLAGS = -I$(INCS)
 

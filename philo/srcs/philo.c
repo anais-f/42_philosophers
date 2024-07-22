@@ -40,9 +40,16 @@ int main(int argc, char **argv)
 		if (pthread_create(&simulation.philo[i].philo_id, NULL, \
 		&routine, &simulation.philo[i]) != 0)
 		{
-			while (i--) {
+			simulation.simul_to_stop = true;
+			pthread_mutex_unlock(&simulation.mutex_start_and_end);
+			while (i--)
+			{
 				pthread_join(simulation.philo[i].philo_id, NULL);
+				pthread_mutex_destroy(&simulation.philo[i].mutex_meal);
 			}
+			//destroy mutex
+			pthread_mutex_destroy(&simulation.mutex_start_and_end);
+			pthread_mutex_destroy(&simulation.mutex_print);
 			get_error_message(ERROR_THREAD);
 		}
 		i++;
@@ -50,7 +57,6 @@ int main(int argc, char **argv)
 	gettimeofday(&tv, NULL);
 	start = (tv.tv_sec *1000 + tv.tv_usec / 1000);
 	pthread_mutex_unlock(&simulation.mutex_start_and_end); //le start est set partout et tous les threads sont crees donc on peut commencer la routine
-
 
 	// monitoring et mutex ici
 	monitoring_philo(&simulation, simulation.philo, nb_philo);
@@ -64,7 +70,18 @@ int main(int argc, char **argv)
 		i++;
 	}
 
-	//free_struct(&simulation, nb_philo);
+	//destroy mutex
+	pthread_mutex_destroy(&simulation.mutex_start_and_end);
+	pthread_mutex_destroy(&simulation.mutex_print);
+	i = 0;
+	while (i < nb_philo)
+	{
+		pthread_mutex_destroy(&simulation.philo[i].mutex_meal);
+		i++;
+	}
+
+	free(simulation.philo);
+	free(simulation.tfork);
 
 	return (EXIT_SUCCESS);
 }

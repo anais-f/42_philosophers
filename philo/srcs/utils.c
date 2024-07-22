@@ -6,7 +6,7 @@
 /*   By: anfichet <anfichet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 13:33:52 by anfichet          #+#    #+#             */
-/*   Updated: 2024/06/14 13:33:52 by anfichet         ###   ########.fr       */
+/*   Updated: 2024/07/22 20:49:36 by anfichet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,51 +87,3 @@ int get_error_message(int code)
 	}
 	return (EXIT_SUCCESS);
 }
-
-void free_struct(t_simulation *simulation, size_t nb_philo)
-{
-	size_t  i;
-
-	if (simulation->philo)
-	{
-		i = 0;
-		while (i < nb_philo)
-		{
-			if (&simulation->philo[i])
-				free(&simulation->philo[i]);
-			i++;
-		}
-		free(simulation->philo);
-	}
-
-//	if (simulation->tfork)
-//	{
-//		i = 0;
-//		while (i < nb_philo)
-//		{
-//			free(&simulation->tfork[i]);
-//			i++;
-//		}
-//		free(simulation->tfork);
-//	}
-
-}
-
-void	free_all(char **array, char *ptr)
-{
-	size_t	i;
-
-	i = 0;
-	if (array)
-	{
-		while (array[i])
-		{
-			free (array[i]);
-			i++;
-		}
-		free (array);
-	}
-	if (ptr)
-		free(ptr);
-}
-

@@ -45,21 +45,15 @@ void    ft_usleep(size_t time)
 	size_t waited;
 	size_t start_time;
 
-	start_time = gettimeofday(&tv, NULL);
-	usleep(time * 0.8);
-	actual_time = gettimeofday(&tv, NULL);
+	gettimeofday(&tv, NULL);
+	start_time = (tv.tv_sec * 1000000 + tv.tv_usec);
+	actual_time = (tv.tv_sec * 1000000 + tv.tv_usec);
 	waited = actual_time - start_time;
 	while (waited < time)
 	{
-		usleep(50);
-		actual_time = gettimeofday(&tv, NULL);
+		usleep(150);
+		gettimeofday(&tv, NULL);
+		actual_time = (tv.tv_sec * 1000000 + tv.tv_usec);
 		waited = actual_time - start_time;
-//		if (waited >= time)
-//			break;
 	}
-
 }
-
-/* usleep -> temps en micro seconde  nos param = temps en millisecondes
- * milli * 1000 pour passer en micro
- * micro / 1000 pour passer en milli */

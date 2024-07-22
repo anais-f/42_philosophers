@@ -22,6 +22,7 @@ void    *routine(void *arg)
 
 	pthread_mutex_lock(philo->mutex_start_and_end); // lock a la creation du philo qui tente de demarrer sa routine et attend que le mutex du main process s'unlock
 	pthread_mutex_unlock(philo->mutex_start_and_end); // quand le mutex du MP ou d'un autre thread on l'unlock pour qu;il pusse continuer
+
 	pthread_mutex_lock(&philo->mutex_meal);
 	philo->last_meal = *philo->start_time;
 	pthread_mutex_unlock(&philo->mutex_meal);
@@ -51,6 +52,14 @@ void    *routine(void *arg)
 				philo->left_fork_taken = true;
 			}
 			pthread_mutex_unlock(&philo->left_fork->mutex_fork);
+			pthread_mutex_lock(philo->mutex_start_and_end);
+			if (*philo->die_or_fed == true)
+			{
+				pthread_mutex_unlock(philo->mutex_start_and_end);
+				return (NULL);
+			}
+			else
+				pthread_mutex_unlock(philo->mutex_start_and_end);
 		}
 /* quand il a pris ses 2 fork_is_busy, il mange */
 		if (philo->right_fork_taken == true && philo->left_fork_taken == true)
@@ -59,8 +68,8 @@ void    *routine(void *arg)
 			pthread_mutex_lock(&philo->mutex_meal);
 			get_time_last_meal(philo);
 			pthread_mutex_unlock(&philo->mutex_meal);
-//			ft_usleep(philo->param.time_to_eat * 1000);
-			usleep(philo->param.time_to_eat * 1000);
+			ft_usleep(philo->param.time_to_eat * 1000);
+//			usleep(philo->param.time_to_eat * 1000);
 			pthread_mutex_lock(&philo->right_fork->mutex_fork);
 			philo->right_fork->fork_is_busy = false;
 			philo->right_fork_taken = false;
@@ -73,8 +82,8 @@ void    *routine(void *arg)
 			philo->nb_meal++;
 			pthread_mutex_unlock(&philo->mutex_meal);
 			get_status_message(philo, SLEEP);
-//			ft_usleep(philo->param.time_to_sleep * 1000);
-			usleep(philo->param.time_to_sleep * 1000);
+			ft_usleep(philo->param.time_to_sleep * 1000);
+//			usleep(philo->param.time_to_sleep * 1000);
 			get_status_message(philo, THINK);
 		}
 		j++;

@@ -30,30 +30,14 @@ static void    wait_start_monitoring(t_philo *philo, int nb_philo)
 	}
 }
 
-static bool     nb_meal_monitoring(t_simulation *simulation, int nb_philo, size_t meal)
-{
-	int i;
-
-	i = 0;
-	while (i < nb_philo)
-	{
-		if (meal >= simulation->param.nb_must_eat)
-			i++;
-		else
-
-			return (false);
-	}
-	return (true);
-}
-
 /* check if philo is die or has eaten enough */
 void    monitoring_philo(t_simulation *simulation, t_philo *philo, int nb_philo)
 {
 	size_t  time_since_last_meal;
 	size_t  actual_time;
-	int i;
 	size_t meal;
-//	int    check = 0;
+	int i;
+	int check = 0;
 
 	wait_start_monitoring(philo, nb_philo);
 	while (1)
@@ -66,9 +50,9 @@ void    monitoring_philo(t_simulation *simulation, t_philo *philo, int nb_philo)
 			time_since_last_meal = actual_time - philo[i].last_meal;
 			meal = philo[i].nb_meal;
 			pthread_mutex_unlock(&philo[i].mutex_meal);
-//			if (meal >= simulation->param.nb_must_eat)
-//				i++;
-			if (time_since_last_meal >= philo->param.time_to_die || (simulation->param.nb_must_eat > 0 && nb_meal_monitoring(simulation, nb_philo, meal) == true))
+			if (meal >= simulation->param.nb_must_eat)
+				check++;
+			if (time_since_last_meal >= philo->param.time_to_die || (simulation->param.nb_must_eat > 0 && check == nb_philo))
 			{
 				pthread_mutex_lock(&simulation->mutex_start_and_end);
 				simulation->simul_to_stop = true;
@@ -79,20 +63,16 @@ void    monitoring_philo(t_simulation *simulation, t_philo *philo, int nb_philo)
 					printf("%ld %zu died\n", get_timestamp_print(philo), philo->n_philo);
 					pthread_mutex_unlock(&simulation->mutex_print);
 				}
+//				if (simulation->param.nb_must_eat > 0 && check == nb_philo)
+//				{
+//					pthread_mutex_lock(&simulation->mutex_print);
+//					printf("%ld philo are fed\n", get_timestamp_print(philo));
+//					pthread_mutex_unlock(&simulation->mutex_print);
+//				}
 				return;
 			}
-//			else if (simulation->param.nb_must_eat > 0 && nb_meal_monitoring(simulation, philo, nb_philo, meal) == true)
-//			{
-//				pthread_mutex_lock(&simulation->mutex_start_and_end);
-//				simulation->simul_to_stop = true;
-//				pthread_mutex_unlock(&simulation->mutex_start_and_end);
-//				pthread_mutex_lock(&simulation->mutex_print);
-//				printf("%ld all philosophers are fed\n", get_timestamp_print(philo));
-//				pthread_mutex_unlock(&simulation->mutex_print);
-//				return ;
-//			}
 			i++;
-
+			usleep(100);
 		}
 	}
 }
