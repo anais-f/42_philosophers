@@ -134,3 +134,4 @@ void	free_all(char **array, char *ptr)
 	if (ptr)
 		free(ptr);
 }
+

@@ -20,8 +20,10 @@ SRCS =\
 		philo.c \
 		utils.c \
 		utils_time.c \
+		utils_routine.c \
 		initialisation.c \
 		routine.c \
+		monitoring.c \
 
 
 SRCS := $(SRCS:%=$(SRCS_DIR)/%)
@@ -38,7 +40,7 @@ DEPS = $(OBJS:.o=.d)
 
 CC = cc
 
-CFLAGS = -Werror -Wextra -Wall -g3 -MMD -MP -pthread
+CFLAGS = -Werror -Wextra -Wall -MMD -MP -pthread
 
 CPPFLAGS = -I$(INCS)
 

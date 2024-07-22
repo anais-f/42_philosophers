@@ -14,7 +14,6 @@
 
 int	init_simulation(size_t nb_philo, char **argv, t_simulation *simulation)
 {
-	//pthread_mutex_t mutex_start_and_end;
 
 	//malloc des tableaux
 	simulation->philo = malloc(sizeof(t_philo) * nb_philo);
@@ -32,7 +31,6 @@ int	init_simulation(size_t nb_philo, char **argv, t_simulation *simulation)
 	}
 	if (pthread_mutex_init(&simulation->mutex_print, NULL) != 0)
 		return (get_error_message(ERROR_INIT_MUTEX));
-	//simulation->mutex_start_and_end = mutex_start_and_end;
 
 	//initialisation des structures
 	init_param(argv, &simulation->param);
@@ -51,7 +49,7 @@ int	init_fork(size_t nb_philo, t_tfork *tfork)
 	while (i < nb_philo)
 	{
 		tfork[i].n_fork = i + 1;
-		tfork[i].fork = false;
+		tfork[i].fork_is_busy = false;
 		if (pthread_mutex_init(&tfork[i].mutex_fork, NULL) != 0)
 		{
 			while (i--)
@@ -92,16 +90,6 @@ int	init_philo(size_t nb_philo, t_simulation *simulation)
 		simulation->philo[i].mutex_start_and_end = &simulation->mutex_start_and_end;
 		simulation->philo[i].mutex_print = &simulation->mutex_print;
 		simulation->philo[i].param = simulation->param;
-
-//		if (pthread_mutex_init(&simulation->philo[i].mutex_die_fed, NULL) != 0)
-//		{
-//			while (i--)
-//			{
-//				if (pthread_mutex_destroy(&simulation->philo[i].mutex_die_fed) != 0)
-//					return (get_error_message(ERROR_DESTROY_MUTEX));
-//			}
-//			return (get_error_message(ERROR_INIT_MUTEX));
-//		}
 		if (pthread_mutex_init(&simulation->philo[i].mutex_meal, NULL) != 0)
 		{
 			while (i--)
@@ -111,7 +99,6 @@ int	init_philo(size_t nb_philo, t_simulation *simulation)
 			}
 			return (get_error_message(ERROR_INIT_MUTEX));
 		}
-
 		i++;
 		j++;
 	}

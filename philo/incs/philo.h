@@ -24,6 +24,12 @@
 # include <errno.h>
 # include <sys/time.h>
 
+# define THINK  "is thinking"
+# define FORK   "has taken a fork"
+# define EAT    "is eating"
+# define SLEEP  "is sleeping"
+# define DIE    "died"
+
 typedef enum s_error
 {
 	ERROR_INIT_MUTEX = 3,
@@ -35,7 +41,7 @@ typedef enum s_error
 typedef struct s_fork
 {
 	size_t          n_fork;
-	bool            fork; //pour savoir si la fourchette est dispo sur la table
+	bool            fork_is_busy;
 	pthread_mutex_t mutex_fork;
 }   t_tfork;
 
@@ -57,12 +63,11 @@ typedef struct s_philo
 	bool            left_fork_taken;
 	bool            *die_or_fed;
 	size_t          last_meal;
-	size_t          nb_meal; //mutex
+	size_t          nb_meal;
 	size_t          *start_time;
 	pthread_mutex_t *mutex_start_and_end;
 	pthread_mutex_t *mutex_print;
 	pthread_mutex_t mutex_meal;
-	//pthread_mutex_t mutex_die_fed;
 	t_param         param;
 }   t_philo;
 
@@ -85,18 +90,21 @@ void    monitoring_philo(t_simulation *simulation, t_philo *philo, int nb_philo)
 size_t  get_timestamp_print(t_philo *philo);
 void    get_time_last_meal(t_philo *philo);
 size_t  get_actual_time(void);
-
 /* Initialization */
 int    init_philo(size_t nb_philo, t_simulation * simulation);
+
 int     init_fork(size_t nb_philo, t_tfork *fork);
 int    init_param(char **argv, t_param *param);
 int     init_simulation(size_t nb_philo, char **argv, t_simulation *simulation);
-
 /* Utils */
 int     ft_atoi(const char *str);
+
 int     check_input(int argc, char **argv);
 int     get_error_message(int code);
+bool    get_simul_status(t_philo *philo);
+int get_status_message(t_philo *philo, char *status);
+void    ft_usleep(size_t time);
+
 void free_struct(t_simulation *simulation, size_t nb_philo);
-bool    check_state_philo(t_philo *philo);
 
 #endif
