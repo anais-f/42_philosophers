@@ -105,7 +105,7 @@ int	init_philo(size_t nb_philo, t_simulation *simulation)
 	return (EXIT_SUCCESS);
 }
 
-int    init_param(char **argv, t_param *param)
+void    init_param(char **argv, t_param *param)
 {
 	param->time_to_die = ft_atoi(argv[2]);
 	param->time_to_eat = ft_atoi(argv[3]);
@@ -114,8 +114,4 @@ int    init_param(char **argv, t_param *param)
 		param->nb_must_eat = ft_atoi(argv[5]);
 	else
 		param->nb_must_eat = 0;
-
-	//printf("to die = %ld, to eat = %ld, to sleep = %ld\n", param->time_to_die, param->time_to_eat, param->time_to_sleep);
-	return (EXIT_SUCCESS);
-
 }

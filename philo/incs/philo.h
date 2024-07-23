@@ -94,17 +94,16 @@ size_t  get_actual_time(void);
 int    init_philo(size_t nb_philo, t_simulation * simulation);
 
 int     init_fork(size_t nb_philo, t_tfork *fork);
-int    init_param(char **argv, t_param *param);
+void    init_param(char **argv, t_param *param);
 int     init_simulation(size_t nb_philo, char **argv, t_simulation *simulation);
+
 /* Utils */
 int     ft_atoi(const char *str);
-
 int     check_input(int argc, char **argv);
 int     get_error_message(int code);
 bool    get_simul_status(t_philo *philo);
 int get_status_message(t_philo *philo, char *status);
 void    ft_usleep(size_t time);
 
-void free_struct(t_simulation *simulation, size_t nb_philo);
 
 #endif

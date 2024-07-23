@@ -47,11 +47,13 @@ void    ft_usleep(size_t time)
 
 	gettimeofday(&tv, NULL);
 	start_time = (tv.tv_sec * 1000000 + tv.tv_usec);
+	usleep(time * 0.5);
+	gettimeofday(&tv, NULL);
 	actual_time = (tv.tv_sec * 1000000 + tv.tv_usec);
 	waited = actual_time - start_time;
 	while (waited < time)
 	{
-		usleep(150);
+		usleep(100);
 		gettimeofday(&tv, NULL);
 		actual_time = (tv.tv_sec * 1000000 + tv.tv_usec);
 		waited = actual_time - start_time;

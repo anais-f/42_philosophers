@@ -36,22 +36,28 @@ void    *routine(void *arg)
 			get_status_message(philo, THINK);
 		while (philo->right_fork_taken == false || philo->left_fork_taken == false)
 		{
-			pthread_mutex_lock(&philo->right_fork->mutex_fork);
-			if (philo->right_fork->fork_is_busy == false)
+			if (philo->right_fork_taken == false)
 			{
-				get_status_message(philo, FORK);
-				philo->right_fork->fork_is_busy = true;
-				philo->right_fork_taken = true;
+				pthread_mutex_lock(&philo->right_fork->mutex_fork);
+				if (philo->right_fork->fork_is_busy == false)
+				{
+					get_status_message(philo, FORK);
+					philo->right_fork->fork_is_busy = true;
+					philo->right_fork_taken = true;
+				}
+				pthread_mutex_unlock(&philo->right_fork->mutex_fork);
 			}
-			pthread_mutex_unlock(&philo->right_fork->mutex_fork);
-			pthread_mutex_lock(&philo->left_fork->mutex_fork);
-			if (philo->left_fork->fork_is_busy == false)
+			if (philo->left_fork_taken == false)
 			{
-				get_status_message(philo, FORK);
-				philo->left_fork->fork_is_busy = true;
-				philo->left_fork_taken = true;
+				pthread_mutex_lock(&philo->left_fork->mutex_fork);
+				if (philo->left_fork->fork_is_busy == false)
+				{
+					get_status_message(philo, FORK);
+					philo->left_fork->fork_is_busy = true;
+					philo->left_fork_taken = true;
+				}
+				pthread_mutex_unlock(&philo->left_fork->mutex_fork);
 			}
-			pthread_mutex_unlock(&philo->left_fork->mutex_fork);
 			pthread_mutex_lock(philo->mutex_start_and_end);
 			if (*philo->die_or_fed == true)
 			{
@@ -60,6 +66,7 @@ void    *routine(void *arg)
 			}
 			else
 				pthread_mutex_unlock(philo->mutex_start_and_end);
+			usleep(500);
 		}
 /* quand il a pris ses 2 fork_is_busy, il mange */
 		if (philo->right_fork_taken == true && philo->left_fork_taken == true)

@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 	while (i < nb_philo)
 	{
 		simulation.philo[i].start_time = &start;
-		//printf("philo n=%zu, valeur f.right num = %ld et bool = %d - valeur f.left num = %ld bool = %d\n", simulation.philo[i].n_philo, simulation.philo[i].right_fork->n_fork, simulation.philo[i].right_fork->fork_taken, simulation.philo[i].left_fork->n_fork, simulation.philo[i].left_fork->fork_taken);
+//printf("philo n=%zu, valeur f.right num = %ld et bool = %d - valeur f.left num = %ld bool = %d\n", simulation.philo[i].n_philo, simulation.philo[i].right_fork->n_fork, simulation.philo[i].right_fork->fork_taken, simulation.philo[i].left_fork->n_fork, simulation.philo[i].left_fork->fork_taken);
 		if (pthread_create(&simulation.philo[i].philo_id, NULL, \
 		&routine, &simulation.philo[i]) != 0)
 		{
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 			//destroy mutex
 			pthread_mutex_destroy(&simulation.mutex_start_and_end);
 			pthread_mutex_destroy(&simulation.mutex_print);
-			get_error_message(ERROR_THREAD);
+			return (get_error_message(ERROR_THREAD));
 		}
 		i++;
 	}
@@ -82,7 +82,6 @@ int main(int argc, char **argv)
 
 	free(simulation.philo);
 	free(simulation.tfork);
-
 	return (EXIT_SUCCESS);
 }
 
