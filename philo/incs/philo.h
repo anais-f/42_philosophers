@@ -87,12 +87,12 @@ void    *routine(void *arg);
 void    monitoring_philo(t_simulation *simulation, t_philo *philo, int nb_philo);
 
 /* Time */
-size_t  get_timestamp_print(t_philo *philo);
+size_t  print_time(t_philo *philo);
 void    get_time_last_meal(t_philo *philo);
 size_t  get_actual_time(void);
-/* Initialization */
-int    init_philo(size_t nb_philo, t_simulation * simulation);
 
+/* Initialization */
+int     init_philo(size_t nb_philo, t_simulation * simulation);
 int     init_fork(size_t nb_philo, t_tfork *fork);
 void    init_param(char **argv, t_param *param);
 int     init_simulation(size_t nb_philo, char **argv, t_simulation *simulation);
@@ -102,7 +102,7 @@ int     ft_atoi(const char *str);
 int     check_input(int argc, char **argv);
 int     get_error_message(int code);
 bool    get_simul_status(t_philo *philo);
-int get_status_message(t_philo *philo, char *status);
+int     get_status_message(t_philo *philo, char *status);
 void    ft_usleep(size_t time);
 
 

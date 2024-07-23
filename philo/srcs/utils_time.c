@@ -30,9 +30,7 @@ void    get_time_last_meal(t_philo *philo)
 	philo->last_meal = (tv_meal.tv_sec *1000 + tv_meal.tv_usec / 1000);
 }
 
-/* pour calculer le temps depuis le lancement du programme (a modifier pour le debut de la simulation)
-sert pour le printf des actions uniquement */
-size_t    get_timestamp_print(t_philo *philo)
+size_t    print_time(t_philo *philo)
 {
 	struct timeval tv;
 	size_t    actual_time;
@@ -40,7 +38,6 @@ size_t    get_timestamp_print(t_philo *philo)
 
 	gettimeofday(&tv, NULL);
 	actual_time = (tv.tv_sec *1000 + tv.tv_usec / 1000);
-//	printf("start time = %ld, actual time = %ld\n", philo->param.start_time, actual_time);
 	diff_time = (actual_time - *philo->start_time);
 	return (diff_time);
 }

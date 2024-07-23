@@ -30,7 +30,7 @@ int get_status_message(t_philo *philo, char *status)
 	pthread_mutex_unlock(philo->mutex_start_and_end);
 	if (state_print == false)
 	{
-		printf("%ld %zu %s\n", get_timestamp_print(philo), philo->n_philo, status);
+		printf("%ld %zu %s\n", print_time(philo), philo->n_philo, status);
 		pthread_mutex_unlock(philo->mutex_print);
 	}
 	else
