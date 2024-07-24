@@ -12,23 +12,25 @@
 
 #include "philo.h"
 
-bool    get_simul_status(t_philo *philo)
+bool	get_simul_status(t_philo *philo)
 {
-	bool    status;
+	bool	status;
+
 	pthread_mutex_lock(philo->mutex_start_and_end);
 	status = *philo->die_or_fed;
 	pthread_mutex_unlock(philo->mutex_start_and_end);
 	return (status);
 }
 
-int get_status_message(t_philo *philo, char *status)
+int	get_status_message(t_philo *philo, char *status)
 {
-	bool    state_print;
+	bool	state_print;
+
 	pthread_mutex_lock(philo->mutex_print);
 	pthread_mutex_lock(philo->mutex_start_and_end);
 	state_print = *philo->die_or_fed;
 	pthread_mutex_unlock(philo->mutex_start_and_end);
-	if (state_print == false)
+	if (state_print == ACTIVE)
 	{
 		printf("%ld %zu %s\n", print_time(philo), philo->n_philo, status);
 		pthread_mutex_unlock(philo->mutex_print);
@@ -38,22 +40,22 @@ int get_status_message(t_philo *philo, char *status)
 	return (EXIT_SUCCESS);
 }
 
-void    ft_usleep(size_t time)
+void	ft_usleep(size_t time, t_philo *philo)
 {
-	struct timeval  tv;
-	size_t actual_time;
-	size_t waited;
-	size_t start_time;
+	struct timeval	tv;
+	size_t			actual_time;
+	size_t			waited;
+	size_t			start_time;
 
 	gettimeofday(&tv, NULL);
 	start_time = (tv.tv_sec * 1000000 + tv.tv_usec);
-	usleep(time * 0.5);
-	gettimeofday(&tv, NULL);
 	actual_time = (tv.tv_sec * 1000000 + tv.tv_usec);
 	waited = actual_time - start_time;
 	while (waited < time)
 	{
-		usleep(100);
+		if (get_simul_status(philo) == UNACTIVE)
+			return ;
+		usleep(150);
 		gettimeofday(&tv, NULL);
 		actual_time = (tv.tv_sec * 1000000 + tv.tv_usec);
 		waited = actual_time - start_time;

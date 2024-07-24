@@ -12,9 +12,9 @@
 
 #include "philo.h"
 
-static void wait_start_monitoring(t_philo *philo, int nb_philo)
+static void	wait_start_monitoring(t_philo *philo, int nb_philo)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < nb_philo)
@@ -30,7 +30,7 @@ static void wait_start_monitoring(t_philo *philo, int nb_philo)
 	}
 }
 
-static void time_to_stop(t_simulation *simulation, t_philo *philo, \
+static void	time_to_stop(t_simulation *simulation, t_philo *philo, \
 			size_t t_last_meal)
 {
 	pthread_mutex_lock(&simulation->mutex_start_and_end);
@@ -45,13 +45,12 @@ static void time_to_stop(t_simulation *simulation, t_philo *philo, \
 	return ;
 }
 
-/* check if philo is die or has eaten enough */
-void    monitoring_philo(t_simulation *simulation, t_philo *philo, int nb_philo)
+void	monitoring_philo(t_simulation *simulation, t_philo *philo, int nb_philo)
 {
-	size_t  t_last_meal;
-	size_t  actual_time;
-	int     i;
-	int     check_meal;
+	size_t	t_last_meal;
+	size_t	actual_time;
+	int		i;
+	int		check_meal;
 
 	wait_start_monitoring(philo, nb_philo);
 	while (1)

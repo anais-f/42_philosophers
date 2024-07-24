@@ -6,7 +6,7 @@
 /*   By: anfichet <anfichet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/15 17:29:16 by anfichet          #+#    #+#             */
-/*   Updated: 2024/04/15 17:29:16 by anfichet         ###   ########.fr       */
+/*   Updated: 2024/07/24 22:17:13 by anfichet         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 	// check input
 	if (check_input(argc, argv) == 1)
 		return (EXIT_FAILURE);
-	nb_philo = ft_atoi(argv[1]);
+	nb_philo = ft_pos_atoi(argv[1]);
 
 	//creer les tableaux et initialiser les structures
 	if (init_simulation(nb_philo, argv, &simulation) != 0)
@@ -47,7 +47,6 @@ int main(int argc, char **argv)
 				pthread_join(simulation.philo[i].philo_id, NULL);
 				pthread_mutex_destroy(&simulation.philo[i].mutex_meal);
 			}
-			//destroy mutex
 			pthread_mutex_destroy(&simulation.mutex_start_and_end);
 			pthread_mutex_destroy(&simulation.mutex_print);
 			return (get_error_message(ERROR_THREAD));

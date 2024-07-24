@@ -12,10 +12,10 @@
 
 #include "philo.h"
 
-static void wait_to_start_routine(t_philo *philo)
+static void	wait_to_start_routine(t_philo *philo)
 {
-	pthread_mutex_lock(philo->mutex_start_and_end); // lock a la creation du philo qui tente de demarrer sa routine et attend que le mutex du main process s'unlock
-	pthread_mutex_unlock(philo->mutex_start_and_end); // quand le mutex du MP ou d'un autre thread on l'unlock pour qu;il pusse continuer
+	pthread_mutex_lock(philo->mutex_start_and_end);
+	pthread_mutex_unlock(philo->mutex_start_and_end);
 	pthread_mutex_lock(&philo->mutex_meal);
 	philo->last_meal = *philo->start_time;
 	pthread_mutex_unlock(&philo->mutex_meal);
@@ -23,12 +23,13 @@ static void wait_to_start_routine(t_philo *philo)
 		usleep((philo->param.time_to_eat * 1000) / 2);
 }
 
-static void get_fork(t_philo *philo)
+static void	get_fork(t_philo *philo)
 {
 	if (philo->right_fork_taken == false)
 	{
 		pthread_mutex_lock(&philo->right_fork->mutex_fork);
-		if (philo->right_fork->fork_is_busy == false) {
+		if (philo->right_fork->fork_is_busy == false)
+		{
 			get_status_message(philo, FORK);
 			philo->right_fork->fork_is_busy = true;
 			philo->right_fork_taken = true;
@@ -38,7 +39,8 @@ static void get_fork(t_philo *philo)
 	if (philo->left_fork_taken == false)
 	{
 		pthread_mutex_lock(&philo->left_fork->mutex_fork);
-		if (philo->left_fork->fork_is_busy == false) {
+		if (philo->left_fork->fork_is_busy == false)
+		{
 			get_status_message(philo, FORK);
 			philo->left_fork->fork_is_busy = true;
 			philo->left_fork_taken = true;
@@ -47,7 +49,7 @@ static void get_fork(t_philo *philo)
 	}
 }
 
-static void release_fork(t_philo *philo)
+static void	release_fork(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->right_fork->mutex_fork);
 	philo->right_fork->fork_is_busy = false;
@@ -59,46 +61,44 @@ static void release_fork(t_philo *philo)
 	pthread_mutex_unlock(&philo->left_fork->mutex_fork);
 }
 
-void    *routine(void *arg)
+static void	time_to_eat(t_philo *philo)
 {
-	t_philo     *philo;
+	get_status_message(philo, EAT);
+	pthread_mutex_lock(&philo->mutex_meal);
+	get_time_last_meal(philo);
+	pthread_mutex_unlock(&philo->mutex_meal);
+	ft_usleep(philo->param.time_to_eat * 1000, philo);
+	release_fork(philo);
+	pthread_mutex_lock(&philo->mutex_meal);
+	philo->nb_meal++;
+	pthread_mutex_unlock(&philo->mutex_meal);
+	get_status_message(philo, SLEEP);
+	ft_usleep(philo->param.time_to_sleep * 1000, philo);
+	get_status_message(philo, THINK);
+}
 
-	philo = (t_philo*)arg;
-	int j = 0;
+void	*routine(void *arg)
+{
+	t_philo	*philo;
+	int		j;
 
+	philo = (t_philo *)arg;
+	j = 0;
 	wait_to_start_routine(philo);
-	while (get_simul_status(philo) == false)
+	while (get_simul_status(philo) == ACTIVE)
 	{
 		if (j == 0)
 			get_status_message(philo, THINK);
-		while (philo->right_fork_taken == false || philo->left_fork_taken == false)
+		while (philo->right_fork_taken == false \
+				|| philo->left_fork_taken == false)
 		{
 			get_fork(philo);
-			pthread_mutex_lock(philo->mutex_start_and_end);
-			if (*philo->die_or_fed == true)
-			{
-				pthread_mutex_unlock(philo->mutex_start_and_end);
+			if (get_simul_status(philo) == 1)
 				return (NULL);
-			}
-			else
-				pthread_mutex_unlock(philo->mutex_start_and_end);
 			usleep(500);
 		}
 		if (philo->right_fork_taken == true && philo->left_fork_taken == true)
-		{
-			get_status_message(philo, EAT);
-			pthread_mutex_lock(&philo->mutex_meal);
-			get_time_last_meal(philo);
-			pthread_mutex_unlock(&philo->mutex_meal);
-			ft_usleep(philo->param.time_to_eat * 1000);
-			release_fork(philo);
-			pthread_mutex_lock(&philo->mutex_meal);
-			philo->nb_meal++;
-			pthread_mutex_unlock(&philo->mutex_meal);
-			get_status_message(philo, SLEEP);
-			ft_usleep(philo->param.time_to_sleep * 1000);
-			get_status_message(philo, THINK);
-		}
+			time_to_eat(philo);
 		j++;
 	}
 	return (NULL);
