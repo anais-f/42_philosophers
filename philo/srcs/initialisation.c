@@ -109,6 +109,7 @@ int	init_simulation(size_t nb_philo, char **argv, t_simulation *simulation)
 	if (init_fork(nb_philo, simulation->tfork) != 0)
 		return (EXIT_FAILURE);
 	init_philo(nb_philo, simulation);
+	simulation->start_simul = 0;
 	simulation->simul_to_stop = false;
 	return (EXIT_SUCCESS);
 }

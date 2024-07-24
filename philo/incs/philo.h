@@ -77,6 +77,7 @@ typedef struct s_simulation
 	t_philo			*philo;
 	t_tfork			*tfork;
 	bool			simul_to_stop;
+	size_t 			start_simul;
 	pthread_mutex_t	mutex_start_and_end;
 	pthread_mutex_t	mutex_print;
 	t_param			param;
