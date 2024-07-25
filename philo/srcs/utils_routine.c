@@ -55,7 +55,7 @@ void	ft_usleep(size_t time, t_philo *philo)
 	{
 		if (get_simul_status(philo) == UNACTIVE)
 			return ;
-		usleep(150);
+		usleep(100);
 		gettimeofday(&tv, NULL);
 		actual_time = (tv.tv_sec * 1000000 + tv.tv_usec);
 		waited = actual_time - start_time;

@@ -12,29 +12,30 @@
 
 #include "philo.h"
 
-void	join_thread_and_destroy_mutex(t_simulation *simulation, int nb_philo)
+int	main(int argc, char **argv)
 {
-	int i;
+	t_simulation	simulation;
+	int				nb_philo;
 
-	i = 0;
-	while(i < nb_philo)
-	{
-		pthread_join(simulation->philo[i].philo_id, NULL);
-		i++;
-	}
-	pthread_mutex_destroy(&simulation->mutex_start_and_end);
-	pthread_mutex_destroy(&simulation->mutex_print);
-	i = 0;
-	while (i < nb_philo)
-	{
-		pthread_mutex_destroy(&simulation->philo[i].mutex_meal);
-		i++;
-	}
+	if (check_input(argc, argv) == 1)
+		return (EXIT_FAILURE);
+	nb_philo = ft_pos_atoi(argv[1]);
+	if (init_simulation(nb_philo, argv, &simulation) != 0)
+		return (EXIT_FAILURE);
+	pthread_mutex_lock(&simulation.mutex_start_and_end);
+	if (create_thread(&simulation, nb_philo) != 0)
+		return (get_error_message(ERROR_THREAD));
+	pthread_mutex_unlock(&simulation.mutex_start_and_end);
+	monitoring_philo(&simulation, simulation.philo, nb_philo);
+	join_thread_and_destroy_mutex(&simulation, nb_philo);
+	free(simulation.philo);
+	free(simulation.tfork);
+	return (EXIT_SUCCESS);
 }
 
-int create_thread(t_simulation *simulation, int nb_philo)
+int	create_thread(t_simulation *simulation, int nb_philo)
 {
-	struct timeval  tv;
+	struct timeval	tv;
 	int				i;
 
 	i = -1;
@@ -53,34 +54,30 @@ int create_thread(t_simulation *simulation, int nb_philo)
 			}
 			pthread_mutex_destroy(&simulation->mutex_start_and_end);
 			pthread_mutex_destroy(&simulation->mutex_print);
-			return (get_error_message(ERROR_THREAD));
+			return (ERROR_THREAD);
 		}
 	}
 	gettimeofday(&tv, NULL);
-	simulation->start_simul = (tv.tv_sec *1000 + tv.tv_usec / 1000);
+	simulation->start_simul = (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 	return (EXIT_SUCCESS);
 }
 
-int main(int argc, char **argv)
+void	join_thread_and_destroy_mutex(t_simulation *simulation, int nb_philo)
 {
-	t_simulation    simulation;
-	int             nb_philo;
+	int	i;
 
-	if (check_input(argc, argv) == 1)
-		return (EXIT_FAILURE);
-	nb_philo = ft_pos_atoi(argv[1]);
-	if (init_simulation(nb_philo, argv, &simulation) != 0)
-		return (EXIT_FAILURE);
-
-	pthread_mutex_lock(&simulation.mutex_start_and_end);
-	create_thread(&simulation, nb_philo); // faire un if pour les message
-	pthread_mutex_unlock(&simulation.mutex_start_and_end);
-
-	monitoring_philo(&simulation, simulation.philo, nb_philo);
-	join_thread_and_destroy_mutex(&simulation, nb_philo);
-	free(simulation.philo);
-	free(simulation.tfork);
-	return (EXIT_SUCCESS);
+	i = 0;
+	while (i < nb_philo)
+	{
+		pthread_join(simulation->philo[i].philo_id, NULL);
+		i++;
+	}
+	pthread_mutex_destroy(&simulation->mutex_start_and_end);
+	pthread_mutex_destroy(&simulation->mutex_print);
+	i = 0;
+	while (i < nb_philo)
+	{
+		pthread_mutex_destroy(&simulation->philo[i].mutex_meal);
+		i++;
+	}
 }
-
-

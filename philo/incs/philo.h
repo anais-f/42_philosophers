@@ -77,7 +77,7 @@ typedef struct s_simulation
 	t_philo			*philo;
 	t_tfork			*tfork;
 	bool			simul_to_stop;
-	size_t 			start_simul;
+	size_t			start_simul;
 	pthread_mutex_t	mutex_start_and_end;
 	pthread_mutex_t	mutex_print;
 	t_param			param;
@@ -94,18 +94,16 @@ void	get_time_last_meal(t_philo *philo);
 size_t	get_actual_time(void);
 
 /* Initialization */
-//int		init_philo(size_t nb_philo, t_simulation *simulation);
-//int		init_fork(size_t nb_philo, t_tfork *fork);
-//void	init_param(char **argv, t_param *param);
 int		init_simulation(size_t nb_philo, char **argv, t_simulation *simulation);
 
 /* Utils */
+int		create_thread(t_simulation *simulation, int nb_philo);
+void	join_thread_and_destroy_mutex(t_simulation *simulation, int nb_philo);
 int		ft_pos_atoi(const char *str);
 int		check_input(int argc, char **argv);
 int		get_error_message(int code);
 bool	get_simul_status(t_philo *philo);
 int		get_status_message(t_philo *philo, char *status);
 void	ft_usleep(size_t time, t_philo *philo);
-int		get_input_message(int code, int i);
 
 #endif

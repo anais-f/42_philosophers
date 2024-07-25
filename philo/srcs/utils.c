@@ -6,11 +6,36 @@
 /*   By: anfichet <anfichet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/14 13:33:52 by anfichet          #+#    #+#             */
-/*   Updated: 2024/07/24 21:45:30 by anfichet         ###   ########.fr       */
+/*   Updated: 2024/07/25 14:39:44 by anfichet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+int	get_input_message(int code, int i)
+{
+	if (code == -2)
+	{
+		printf("Argument %d must be less than int_max\n", i);
+		return (EXIT_FAILURE);
+	}
+	else if (code == -3)
+	{
+		printf("Argument %d must contain numbers only\n", i);
+		return (EXIT_FAILURE);
+	}
+	else if (code == -4)
+	{
+		printf("Argument %d must be a positive number\n", i);
+		return (EXIT_FAILURE);
+	}
+	else if (code == -5)
+	{
+		write(1, "Wrong numbers of arguments, please check your input\n", 52);
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
 
 int	check_input(int argc, char **argv)
 {
@@ -38,27 +63,22 @@ int	check_input(int argc, char **argv)
 	return (EXIT_SUCCESS);
 }
 
-int	get_input_message(int code, int i)
+int	get_error_message(int code)
 {
-	if (code == -2)
+	if (code == ERROR_INIT_MUTEX)
 	{
-		printf("Argument %d must be less than int_max\n", i);
-		return (EXIT_FAILURE);
+		printf("Error init mutex: %s\n", strerror(errno));
+		return (ERROR_INIT_MUTEX);
 	}
-	else if (code == -3)
+	else if (code == ERROR_DESTROY_MUTEX)
 	{
-		printf("Argument %d must contain only number\n", i);
-		return (EXIT_FAILURE);
+		printf("Error destroy mutex: %s\n", strerror(errno));
+		return (ERROR_DESTROY_MUTEX);
 	}
-	else if (code == -4)
+	else if (code == ERROR_THREAD)
 	{
-		printf("Argument %d must be a positive number\n", i);
-		return (EXIT_FAILURE);
-	}
-	else if (code == -5)
-	{
-		write(1, "Wrong numbers of arguments, please check your input\n", 52);
-		return (EXIT_FAILURE);
+		printf("Error thread: %s\n", strerror(errno));
+		return (ERROR_THREAD);
 	}
 	return (EXIT_SUCCESS);
 }
@@ -87,24 +107,4 @@ int	ft_pos_atoi(const char *str)
 		return (nb);
 	else
 		return (-3);
-}
-
-int	get_error_message(int code)
-{
-	if (code == ERROR_INIT_MUTEX)
-	{
-		printf("Error init mutex: %s\n", strerror(errno));
-		return (ERROR_INIT_MUTEX);
-	}
-	else if (code == ERROR_DESTROY_MUTEX)
-	{
-		printf("Error destroy mutex: %s\n", strerror(errno));
-		return (ERROR_DESTROY_MUTEX);
-	}
-	else if (code == ERROR_THREAD)
-	{
-		printf("Error thread: %s\n", strerror(errno));
-		return (ERROR_THREAD);
-	}
-	return (EXIT_SUCCESS);
 }
