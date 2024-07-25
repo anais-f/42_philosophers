@@ -6,7 +6,7 @@
 /*   By: anfichet <anfichet@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/18 00:32:20 by anfichet          #+#    #+#             */
-/*   Updated: 2024/06/18 00:32:20 by anfichet         ###   ########.fr       */
+/*   Updated: 2024/07/25 16:44:18 by anfichet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,12 +66,10 @@ static void	time_to_eat(t_philo *philo)
 	get_status_message(philo, EAT);
 	pthread_mutex_lock(&philo->mutex_meal);
 	get_time_last_meal(philo);
+	philo->nb_meal++;
 	pthread_mutex_unlock(&philo->mutex_meal);
 	ft_usleep(philo->param.time_to_eat * 1000, philo);
 	release_fork(philo);
-	pthread_mutex_lock(&philo->mutex_meal);
-	philo->nb_meal++;
-	pthread_mutex_unlock(&philo->mutex_meal);
 	get_status_message(philo, SLEEP);
 	ft_usleep(philo->param.time_to_sleep * 1000, philo);
 	get_status_message(philo, THINK);
@@ -93,9 +91,9 @@ void	*routine(void *arg)
 				|| philo->left_fork_taken == false)
 		{
 			get_fork(philo);
-			if (get_simul_status(philo) == 1)
+			if (get_simul_status(philo) == UNACTIVE)
 				return (NULL);
-			usleep(500);
+			usleep(100);
 		}
 		if (philo->right_fork_taken == true && philo->left_fork_taken == true)
 			time_to_eat(philo);
